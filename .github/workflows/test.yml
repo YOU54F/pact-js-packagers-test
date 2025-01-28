@@ -3,10 +3,10 @@ name: Build and test
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 jobs:
@@ -16,11 +16,15 @@ jobs:
     defaults:
       run:
         shell: bash
+        working-directory: ${{ matrix.npm_package_manager }}
     strategy:
       fail-fast: false
       matrix:
         node-version: [16, 18, 20, 22]
-        npm_package_manager: [yarn, pnpm, npm]
+        npm_package_manager:
+          - yarn
+          - pnpm
+          - npm
         os: [
             macos-13,
             macos-15,
@@ -34,16 +38,20 @@ jobs:
       NODE_VERSION: ${{ matrix.node-version }}
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: ${{ matrix.npm_package_manager }}
+          # cache: ${{ matrix.npm_package_manager }}
+          # cache-dependency-path: ${{ matrix.npm_package_manager }}
 
-      - run: ${{ matrix.npm_package_manager }} install --save-dev @you54f/pact jest axios
+      - run: corepack enable
+        if: matrix.npm_package_manager == 'pnpm'
+
+      - run: ${{ matrix.npm_package_manager }} install
       - run: ${{ matrix.npm_package_manager }} run test
 

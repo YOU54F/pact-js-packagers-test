@@ -21,3 +21,7 @@ yarn set version berry
 yarn install
 yarn test
 ```
+
+yarn set version berry
+
+npm install -g pnpm
