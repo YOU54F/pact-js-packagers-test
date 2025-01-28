@@ -32,7 +32,12 @@ jobs:
             ubuntu-24.04-arm,
             windows-latest
           ]
-    name: Test ${{ matrix.os }}-${{ matrix.node-version }}-${{ matrix.npm_package_manager }}
+        exclude:
+          - npm_package_manager: yarn
+            node-version: 16
+          - npm_package_manager: pnpm
+            node-version: 16
+    name: Test ${{ matrix.os }}-node-${{ matrix.node-version }}-${{ matrix.npm_package_manager }}
 
     env:
       NODE_VERSION: ${{ matrix.node-version }}
